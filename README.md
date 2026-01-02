@@ -29,9 +29,9 @@ use HM\Block_Pattern_Transformer\Template;
 $transformer = new Template( 'theme/template-article' );
 
 $content = $transformer
-    ->replace_text( 'theme/hero', 'core/heading', 0, 'Article Title' )
-    ->replace_text( 'theme/hero', 'core/paragraph', 0, 'Article description' )
-    ->replace_placeholder( 'content-placeholder', $content_blocks )
+    ->replace_text( pattern_slug: 'theme/hero', block_type: 'core/heading', occurence: 0, text: 'Article Title' )
+    ->replace_text( pattern_slug: 'theme/hero', block_type: 'core/paragraph', 0, 'Article description' )
+    ->replace_placeholder( placeholder_name: 'content-placeholder', content_blocks: $content_blocks )
     ->get_content();
 
 // Use the transformed content
