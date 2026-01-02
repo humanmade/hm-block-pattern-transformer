@@ -35,14 +35,37 @@ function create_heading( string $content, int $level = 2 ) : array {
 /**
  * Create a paragraph block.
  *
+ * Content is sanitized using wp_kses. The allowed HTML tags can be filtered
+ * via the 'hm.block_pattern_transformer.paragraph_allowed_html' hook.
+ *
  * @param string $content Paragraph content.
  * @return array Paragraph block array.
  */
 function create_paragraph( string $content ) : array {
 	$content = trim( $content );
 
-	// Convert line breaks to <br> tags if needed.
-	$content = wpautop( $content );
+	// Sanitize HTML - allow common inline elements.
+	$allowed_html = apply_filters( 'hm.block_pattern_transformer.paragraph_allowed_html', [
+		'a'      => [
+			'href'   => true,
+			'title'  => true,
+			'target' => true,
+			'rel'    => true,
+			'class'  => true,
+		],
+		'strong' => [],
+		'b'      => [],
+		'em'     => [],
+		'i'      => [],
+		'br'     => [],
+		'code'   => [],
+		'sub'    => [],
+		'sup'    => [],
+	] );
+	$content = wp_kses( $content, $allowed_html );
+
+	// Convert single line breaks to <br> tags.
+	$content = nl2br( $content, false );
 
 	$html = sprintf( '<p>%s</p>', $content );
 
@@ -55,6 +78,9 @@ function create_paragraph( string $content ) : array {
 /**
  * Create multiple paragraph blocks from text with line breaks.
  *
+ * Double line breaks (or existing paragraph tags) are used to split content
+ * into separate paragraph blocks. Each paragraph is sanitized via create_paragraph().
+ *
  * @param string $content Content with potential multiple paragraphs.
  * @return array Array of paragraph block arrays.
  */
@@ -64,7 +90,7 @@ function create_paragraphs( string $content ) : array {
 	$blocks = [];
 
 	foreach ( $paragraphs as $paragraph ) {
-		$paragraph = trim( strip_tags( $paragraph, '<a><strong><em><br>' ) );
+		$paragraph = trim( $paragraph );
 		if ( ! empty( $paragraph ) ) {
 			$blocks[] = create_paragraph( $paragraph );
 		}
