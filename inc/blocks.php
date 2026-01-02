@@ -23,15 +23,13 @@ function create_heading( string $content, int $level = 2 ) : array {
 	$content = preg_replace( '/<\/?h[1-6][^>]*>/', '', $content );
 	$content = trim( $content );
 
-	return [
-		'blockName' => 'core/heading',
-		'attrs' => [
-			'level' => $level,
-		],
-		'innerBlocks' => [],
-		'innerHTML' => sprintf( '<h%d class="wp-block-heading">%s</h%d>', $level, $content, $level ),
-		'innerContent' => [ sprintf( '<h%d class="wp-block-heading">%s</h%d>', $level, $content, $level ) ],
-	];
+	$html = sprintf( '<h%d class="wp-block-heading">%s</h%d>', $level, $content, $level );
+
+	return create_block(
+		block_name: 'core/heading',
+		attrs: [ 'level' => $level ],
+		inner_html: $html
+	);
 }
 
 /**
@@ -46,13 +44,12 @@ function create_paragraph( string $content ) : array {
 	// Convert line breaks to <br> tags if needed.
 	$content = wpautop( $content );
 
-	return [
-		'blockName' => 'core/paragraph',
-		'attrs' => [],
-		'innerBlocks' => [],
-		'innerHTML' => sprintf( '<p>%s</p>', $content ),
-		'innerContent' => [ sprintf( '<p>%s</p>', $content ) ],
-	];
+	$html = sprintf( '<p>%s</p>', $content );
+
+	return create_block(
+		block_name: 'core/paragraph',
+		inner_html: $html
+	);
 }
 
 /**
@@ -77,30 +74,23 @@ function create_paragraphs( string $content ) : array {
 }
 
 /**
- * Create a custom block with attributes and optional inner blocks.
+ * Create a leaf block with attributes and optional HTML content.
  *
- * For blocks with inner blocks but no wrapper HTML, innerContent will be
- * an array of nulls (one per inner block). These nulls act as placeholders
- * that serialize_blocks() replaces with the serialized inner blocks.
+ * Use this for blocks that don't contain other blocks (headings, paragraphs,
+ * images, etc.). For container blocks with inner blocks, use create_wrapper_block().
  *
- * For blocks with wrapper HTML, use create_wrapper_block() instead.
- *
- * @param string $block_name Block name (e.g., 'theme/hero').
+ * @param string $block_name Block name (e.g., 'core/heading').
  * @param array  $attrs Block attributes.
- * @param array  $inner_blocks Inner blocks (optional).
+ * @param string $inner_html HTML content for the block.
  * @return array Block array.
  */
-function create_block( string $block_name, array $attrs = [], array $inner_blocks = [] ) : array {
-	// For blocks without wrapper HTML, innerContent is just nulls for each inner block.
-	// The nulls tell serialize_blocks() where to place each serialized inner block.
-	$inner_content = empty( $inner_blocks ) ? [] : array_fill( 0, count( $inner_blocks ), null );
-
+function create_block( string $block_name, array $attrs = [], string $inner_html = '' ) : array {
 	return [
 		'blockName' => $block_name,
 		'attrs' => $attrs,
-		'innerBlocks' => $inner_blocks,
-		'innerHTML' => '',
-		'innerContent' => $inner_content,
+		'innerBlocks' => [],
+		'innerHTML' => $inner_html,
+		'innerContent' => empty( $inner_html ) ? [] : [ $inner_html ],
 	];
 }
 
