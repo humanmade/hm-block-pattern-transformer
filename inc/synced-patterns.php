@@ -39,7 +39,7 @@ function get_or_create( string $key, string $pattern_slug, string $title ) {
 		'post_status'    => 'publish',
 		'posts_per_page' => 1,
 		'fields'         => 'ids',
-		'meta_query'     => [
+		'meta_query'     => [ // phpcs:ignore HM.Performance.SlowMetaQuery
 			[
 				'key'   => SYNCED_PATTERN_KEY_META,
 				'value' => $key,
