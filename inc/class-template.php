@@ -121,6 +121,11 @@ class Template {
 
 		// Resolve remaining nested patterns.
 		$this->blocks = Pattern_Transformer\resolve_and_tag_patterns( $blocks );
+
+		// Tag top-level blocks with the template pattern slug so transformations
+		// targeting this pattern will apply. This is needed because resolve_and_tag_patterns
+		// only tags blocks when resolving nested pattern references.
+		$this->blocks = Pattern_Transformer\tag_blocks_recursively( $this->blocks, $this->pattern_slug );
 	}
 
 	/**
@@ -448,6 +453,9 @@ class Template {
 	 * @return bool True if error occurred.
 	 */
 	public function has_error() {
+		// Load pattern to determine error state.
+		$this->load_pattern();
+
 		return $this->error !== null;
 	}
 

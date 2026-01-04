@@ -201,6 +201,8 @@ function apply_pattern_transformations( array $blocks, array $transformations, a
 
 		// Process inner blocks.
 		if ( ! empty( $block['innerBlocks'] ) ) {
+			$original_inner_count = count( $block['innerBlocks'] );
+
 			// Tag inner blocks with parent's source pattern if they don't have one.
 			// This ensures transformations targeting a pattern also apply to nested blocks.
 			// Do this recursively for ALL descendant blocks.
@@ -213,6 +215,11 @@ function apply_pattern_transformations( array $blocks, array $transformations, a
 				$transformations,
 				$block_type_counters
 			);
+
+			// If blocks were deleted, rebuild innerContent to match new innerBlocks count.
+			if ( count( $block['innerBlocks'] ) !== $original_inner_count ) {
+				$block = rebuild_inner_content( $block );
+			}
 		}
 
 		$result[] = $block;
