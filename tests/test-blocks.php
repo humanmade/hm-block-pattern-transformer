@@ -140,4 +140,76 @@ class BlocksTest extends WP_UnitTestCase {
 
 		$this->assertEquals( 'Some content', $result );
 	}
+
+	/**
+	 * Test create_paragraph sanitizes disallowed HTML tags.
+	 */
+	public function test_create_paragraph_sanitizes_disallowed_tags() {
+		$block = Blocks\create_paragraph( 'Text with <script>alert("xss")</script> removed' );
+
+		// wp_kses removes tags but preserves text content.
+		$this->assertStringNotContainsString( '<script>', $block['innerHTML'] );
+		$this->assertStringNotContainsString( '</script>', $block['innerHTML'] );
+		$this->assertStringContainsString( 'Text with', $block['innerHTML'] );
+		$this->assertStringContainsString( 'removed', $block['innerHTML'] );
+	}
+
+	/**
+	 * Test create_paragraph preserves allowed inline HTML.
+	 */
+	public function test_create_paragraph_preserves_allowed_tags() {
+		$block = Blocks\create_paragraph( 'Text with <strong>bold</strong> and <em>italic</em> and <a href="https://example.com">link</a>' );
+
+		$this->assertStringContainsString( '<strong>bold</strong>', $block['innerHTML'] );
+		$this->assertStringContainsString( '<em>italic</em>', $block['innerHTML'] );
+		$this->assertStringContainsString( '<a href="https://example.com">link</a>', $block['innerHTML'] );
+	}
+
+	/**
+	 * Test create_paragraph converts line breaks to br tags.
+	 */
+	public function test_create_paragraph_converts_line_breaks() {
+		$block = Blocks\create_paragraph( "Line one\nLine two" );
+
+		$this->assertStringContainsString( 'Line one<br>', $block['innerHTML'] );
+		$this->assertStringContainsString( 'Line two', $block['innerHTML'] );
+	}
+
+	/**
+	 * Test create_paragraph filter allows customizing allowed HTML.
+	 */
+	public function test_create_paragraph_filter_customizes_allowed_html() {
+		// Add a filter to allow <mark> tags.
+		add_filter( 'hm.block_pattern_transformer.paragraph_allowed_html', function( $allowed ) {
+			$allowed['mark'] = [ 'class' => true ];
+			return $allowed;
+		} );
+
+		$block = Blocks\create_paragraph( 'Text with <mark class="highlight">highlighted</mark> content' );
+
+		$this->assertStringContainsString( '<mark class="highlight">highlighted</mark>', $block['innerHTML'] );
+
+		// Clean up filter.
+		remove_all_filters( 'hm.block_pattern_transformer.paragraph_allowed_html' );
+	}
+
+	/**
+	 * Test create_paragraph filter can restrict allowed HTML.
+	 */
+	public function test_create_paragraph_filter_restricts_allowed_html() {
+		// Add a filter to only allow plain text (no HTML).
+		add_filter( 'hm.block_pattern_transformer.paragraph_allowed_html', function() {
+			return [];
+		} );
+
+		$block = Blocks\create_paragraph( 'Text with <strong>bold</strong> stripped' );
+
+		$this->assertStringNotContainsString( '<strong>', $block['innerHTML'] );
+		$this->assertStringContainsString( 'Text with', $block['innerHTML'] );
+		$this->assertStringContainsString( 'bold', $block['innerHTML'] );
+		$this->assertStringContainsString( 'stripped', $block['innerHTML'] );
+
+		// Clean up filter.
+		remove_all_filters( 'hm.block_pattern_transformer.paragraph_allowed_html' );
+	}
 }

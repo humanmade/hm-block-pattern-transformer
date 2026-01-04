@@ -342,4 +342,52 @@ class TemplateTest extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( 'Hero Title', $content );
 		$this->assertStringNotContainsString( 'Ready to get started', $content );
 	}
+
+	/**
+	 * Test replace_with_synced_pattern creates synced block reference.
+	 */
+	public function test_replace_with_synced_pattern_creates_reference() {
+		$template = new Template( 'test/template-article' );
+
+		$content = $template
+			->replace_with_synced_pattern(
+				'test/footer-cta',
+				'footer-cta-template-test',
+				'Footer CTA (Template Test)'
+			)
+			->get_content();
+
+		// Should contain a wp:block reference instead of resolved pattern content.
+		$this->assertStringContainsString( 'wp:block', $content );
+		$this->assertStringContainsString( '"ref":', $content );
+
+		// The footer-cta content should NOT be inline (it's now a reference).
+		$this->assertStringNotContainsString( 'Ready to get started', $content );
+
+		// Hero content should still be resolved inline.
+		$this->assertStringContainsString( 'Hero Title', $content );
+	}
+
+	/**
+	 * Test replace_with_synced_pattern can be combined with other transformations.
+	 */
+	public function test_replace_with_synced_pattern_with_transformations() {
+		$template = new Template( 'test/template-article' );
+
+		$content = $template
+			->replace_text( 'test/hero', 'core/heading', 0, 'Welcome Home' )
+			->replace_with_synced_pattern(
+				'test/footer-cta',
+				'footer-cta-combined-test',
+				'Footer CTA (Combined Test)'
+			)
+			->get_content();
+
+		// Hero transformation should apply.
+		$this->assertStringContainsString( 'Welcome Home', $content );
+		$this->assertStringNotContainsString( 'Hero Title', $content );
+
+		// Footer should be a synced reference.
+		$this->assertStringContainsString( 'wp:block', $content );
+	}
 }
