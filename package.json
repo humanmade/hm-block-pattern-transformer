@@ -1,0 +1,15 @@
+{
+	"name": "hm-block-pattern-transformer",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Pattern-based content transformation for WordPress block migrations",
+	"scripts": {
+		"wp-env": "wp-env",
+		"start": "wp-env start",
+		"stop": "wp-env stop",
+		"test": "wp-env run tests-cli --env-cwd=wp-content/plugins/hm-block-pattern-transformer vendor/bin/phpunit"
+	},
+	"devDependencies": {
+		"@wordpress/env": "^10.0.0"
+	}
+}

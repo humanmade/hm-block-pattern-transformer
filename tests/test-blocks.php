@@ -7,35 +7,13 @@
 
 namespace HM\Block_Pattern_Transformer\Tests;
 
-use Brain\Monkey;
-use Brain\Monkey\Functions;
-use PHPUnit\Framework\TestCase;
+use WP_UnitTestCase;
 use HM\Block_Pattern_Transformer\Blocks;
 
 /**
  * Test block creation functions.
  */
-class BlocksTest extends TestCase {
-
-	/**
-	 * Set up Brain\Monkey before each test.
-	 */
-	protected function setUp() : void {
-		parent::setUp();
-		Monkey\setUp();
-
-		// Mock WordPress functions.
-		Functions\when( 'wpautop' )->returnArg();
-		Functions\when( 'wp_strip_all_tags' )->alias( 'strip_tags' );
-	}
-
-	/**
-	 * Tear down Brain\Monkey after each test.
-	 */
-	protected function tearDown() : void {
-		Monkey\tearDown();
-		parent::tearDown();
-	}
+class BlocksTest extends WP_UnitTestCase {
 
 	/**
 	 * Test create_heading creates proper block structure.
@@ -120,18 +98,15 @@ class BlocksTest extends TestCase {
 	}
 
 	/**
-	 * Test create_block with inner blocks.
+	 * Test create_block with inner_html creates leaf block.
 	 */
-	public function test_create_block_with_inner_blocks() {
-		$inner = Blocks\create_paragraph( 'Inner content' );
-		$block = Blocks\create_block( 'core/group', [], [ $inner ] );
+	public function test_create_block_with_inner_html() {
+		$block = Blocks\create_block( 'core/html', [], '<div>Custom HTML</div>' );
 
-		$this->assertCount( 1, $block['innerBlocks'] );
-		$this->assertEquals( 'core/paragraph', $block['innerBlocks'][0]['blockName'] );
-
-		// innerContent should have null placeholders.
+		$this->assertEquals( 'core/html', $block['blockName'] );
+		$this->assertEquals( '<div>Custom HTML</div>', $block['innerHTML'] );
 		$this->assertCount( 1, $block['innerContent'] );
-		$this->assertNull( $block['innerContent'][0] );
+		$this->assertEquals( '<div>Custom HTML</div>', $block['innerContent'][0] );
 	}
 
 	/**

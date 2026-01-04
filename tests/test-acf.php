@@ -7,13 +7,13 @@
 
 namespace HM\Block_Pattern_Transformer\Tests;
 
-use PHPUnit\Framework\TestCase;
+use WP_UnitTestCase;
 use HM\Block_Pattern_Transformer\ACF;
 
 /**
  * Test ACF extraction functions.
  */
-class ACFTest extends TestCase {
+class ACFTest extends WP_UnitTestCase {
 
 	/**
 	 * Test extract_field with existing field.
