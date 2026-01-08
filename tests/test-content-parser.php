@@ -95,33 +95,15 @@ class ContentParserTest extends WP_UnitTestCase {
 	// =========================================================================
 
 	/**
-	 * Test is_oembed_url detects YouTube.
+	 * Test is_oembed_url uses WordPress core's provider registry.
+	 *
+	 * Just a sanity check - detailed provider testing is WordPress core's responsibility.
 	 */
-	public function test_is_oembed_url_detects_youtube() {
+	public function test_is_oembed_url_delegates_to_core() {
+		// Known provider should return true.
 		$this->assertTrue( Content_Parser\is_oembed_url( 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' ) );
-		$this->assertTrue( Content_Parser\is_oembed_url( 'https://youtu.be/dQw4w9WgXcQ' ) );
-	}
 
-	/**
-	 * Test is_oembed_url detects Vimeo.
-	 */
-	public function test_is_oembed_url_detects_vimeo() {
-		$this->assertTrue( Content_Parser\is_oembed_url( 'https://vimeo.com/123456789' ) );
-		$this->assertTrue( Content_Parser\is_oembed_url( 'https://player.vimeo.com/video/123456789' ) );
-	}
-
-	/**
-	 * Test is_oembed_url detects Twitter/X.
-	 */
-	public function test_is_oembed_url_detects_twitter() {
-		$this->assertTrue( Content_Parser\is_oembed_url( 'https://twitter.com/user/status/123' ) );
-		$this->assertTrue( Content_Parser\is_oembed_url( 'https://x.com/user/status/123' ) );
-	}
-
-	/**
-	 * Test is_oembed_url returns false for non-oembed URLs.
-	 */
-	public function test_is_oembed_url_returns_false_for_generic() {
+		// Unknown URL should return false.
 		$this->assertFalse( Content_Parser\is_oembed_url( 'https://example.com/page' ) );
 	}
 

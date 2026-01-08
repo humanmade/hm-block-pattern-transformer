@@ -42,32 +42,17 @@ function is_freeform_block( array $block ) : bool {
 /**
  * Check if a URL is from a known oEmbed provider.
  *
+ * Uses WordPress core's oEmbed provider registry, which includes all built-in
+ * providers plus any custom providers added via wp_oembed_add_provider().
+ *
  * @param string $url URL to check.
  * @return bool True if the URL is from an oembed provider.
  */
 function is_oembed_url( string $url ) : bool {
-	$oembed_providers = [
-		'youtube.com',
-		'youtu.be',
-		'vimeo.com',
-		'twitter.com',
-		'x.com',
-		'facebook.com',
-		'instagram.com',
-		'soundcloud.com',
-		'spotify.com',
-		'slideshare.net',
-		'wistia.com',
-		'ted.com',
-	];
+	$oembed = _wp_oembed_get_object();
 
-	foreach ( $oembed_providers as $provider ) {
-		if ( strpos( $url, $provider ) !== false ) {
-			return true;
-		}
-	}
-
-	return false;
+	// get_provider() returns the provider URL if found, false otherwise.
+	return (bool) $oembed->get_provider( $url, [ 'discover' => false ] );
 }
 
 /**
