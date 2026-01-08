@@ -116,7 +116,9 @@ class ContentParserTest extends WP_UnitTestCase {
 
 		$this->assertIsArray( $result );
 		$this->assertEquals( 'oembed', $result['type'] );
-		$this->assertEquals( 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', $result['url'] );
+		// Returns a URL that WordPress oEmbed recognizes (may be original or converted).
+		$this->assertTrue( Content_Parser\is_oembed_url( $result['url'] ) );
+		$this->assertStringContainsString( 'dQw4w9WgXcQ', $result['url'] );
 	}
 
 	/**
@@ -128,7 +130,9 @@ class ContentParserTest extends WP_UnitTestCase {
 
 		$this->assertIsArray( $result );
 		$this->assertEquals( 'oembed', $result['type'] );
-		$this->assertEquals( 'https://vimeo.com/123456789', $result['url'] );
+		// Returns a URL that WordPress oEmbed recognizes (may be original or converted).
+		$this->assertTrue( Content_Parser\is_oembed_url( $result['url'] ) );
+		$this->assertStringContainsString( '123456789', $result['url'] );
 	}
 
 	/**

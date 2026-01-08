@@ -58,42 +58,59 @@ function is_oembed_url( string $url ) : bool {
 /**
  * Detect if HTML content can be converted to an embed block.
  *
- * Checks for common embed patterns like iframe, script, or oembed providers.
- * Converts embed URLs (e.g., youtube.com/embed/ID) to watch URLs for oEmbed.
+ * Extracts URLs from iframes and checks if they're from oEmbed providers.
+ * Converts embed URLs (e.g., youtube.com/embed/ID) to canonical URLs for oEmbed.
  *
  * @param string $html HTML content to check.
  * @return array|false Array with 'type' and 'url' if embeddable, false otherwise.
  */
 function detect_embeddable_html( string $html ) {
-	// Check for YouTube embed URLs (iframe or script).
-	// Convert embed URL to watch URL for oEmbed compatibility.
-	if ( preg_match( '/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/', $html, $matches ) ) {
+	// Extract URL from iframe src attribute.
+	if ( ! preg_match( '/<iframe[^>]+src=["\']([^"\']+)["\']/', $html, $matches ) ) {
+		return false;
+	}
+
+	$url = $matches[1];
+
+	// Check if WordPress core recognizes this URL directly.
+	if ( is_oembed_url( $url ) ) {
 		return [
 			'type' => 'oembed',
-			'url' => 'https://www.youtube.com/watch?v=' . $matches[1],
+			'url' => $url,
 		];
 	}
 
-	// Check for Vimeo player URLs.
-	// Convert player URL to standard URL for oEmbed compatibility.
-	if ( preg_match( '/player\.vimeo\.com\/video\/(\d+)/', $html, $matches ) ) {
+	// Try converting embed URLs to canonical URLs that oEmbed expects.
+	$canonical_url = convert_embed_url_to_canonical( $url );
+
+	if ( $canonical_url && is_oembed_url( $canonical_url ) ) {
 		return [
 			'type' => 'oembed',
-			'url' => 'https://vimeo.com/' . $matches[1],
+			'url' => $canonical_url,
 		];
 	}
 
-	// Check for iframe with src attribute (other oEmbed providers).
-	if ( preg_match( '/<iframe[^>]+src=["\']([^"\']+)["\']/', $html, $matches ) ) {
-		$url = $matches[1];
+	return false;
+}
 
-		// Check if it's from a known oembed provider.
-		if ( is_oembed_url( $url ) ) {
-			return [
-				'type' => 'oembed',
-				'url' => $url,
-			];
-		}
+/**
+ * Convert embed/player URLs to canonical URLs for oEmbed.
+ *
+ * Embed iframes often use different URL formats than what oEmbed expects.
+ * For example, YouTube uses youtube.com/embed/ID but oEmbed expects youtube.com/watch?v=ID.
+ *
+ * @param string $url Embed URL to convert.
+ * @return string|false Canonical URL or false if no conversion available.
+ */
+function convert_embed_url_to_canonical( string $url ) {
+	// YouTube: /embed/ID → /watch?v=ID
+	if ( preg_match( '/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/', $url, $matches ) ) {
+		return 'https://www.youtube.com/watch?v=' . $matches[1];
+	}
+
+	// Vimeo: player.vimeo.com/video/ID → vimeo.com/ID
+	if ( preg_match( '/player\.vimeo\.com\/video\/(\d+)/', $url, $matches ) ) {
+		return 'https://vimeo.com/' . $matches[1];
 	}
 
 	return false;
