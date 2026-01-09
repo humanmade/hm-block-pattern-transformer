@@ -1,5 +1,5 @@
 {
-	"name": "humanmade/block-pattern-transformer",
+	"name": "humanmade/hm-block-pattern-transformer",
 	"description": "Pattern-based content transformation for WordPress block migrations",
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",
