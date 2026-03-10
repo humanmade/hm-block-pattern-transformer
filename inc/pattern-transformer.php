@@ -311,9 +311,10 @@ function update_block_text_content( array $block, string $new_text ) : array {
 	// Collect all attributes.
 	foreach ( $processor->get_attribute_names_with_prefix( '' ) as $attr_name ) {
 		$attr_value = $processor->get_attribute( $attr_name );
-		if ( null !== $attr_value ) {
+		if ( is_string( $attr_value ) ) {
 			$attributes .= sprintf( ' %s="%s"', $attr_name, esc_attr( $attr_value ) );
 		} else {
+			// Boolean attribute (true) or missing value (null).
 			$attributes .= sprintf( ' %s', $attr_name );
 		}
 	}
@@ -384,7 +385,12 @@ function rebuild_inner_content( array $block ) : array {
 
 	foreach ( $processor->get_attribute_names_with_prefix( '' ) as $attr_name ) {
 		$attr_value = $processor->get_attribute( $attr_name );
-		$attributes .= sprintf( ' %s="%s"', $attr_name, esc_attr( $attr_value ) );
+		if ( is_string( $attr_value ) ) {
+			$attributes .= sprintf( ' %s="%s"', $attr_name, esc_attr( $attr_value ) );
+		} else {
+			// Boolean attribute (true) or missing value (null).
+			$attributes .= sprintf( ' %s', $attr_name );
+		}
 	}
 
 	$opening_tag = "<{$tag_name}{$attributes}>";
