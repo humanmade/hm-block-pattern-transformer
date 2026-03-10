@@ -161,6 +161,23 @@ class Template {
 	}
 
 	/**
+	 * Replace the full innerHTML of a specific block.
+	 *
+	 * @param string $pattern_slug Source pattern slug.
+	 * @param string $block_type Block type.
+	 * @param int    $occurrence Which occurrence (0-indexed).
+	 * @param string $html New innerHTML content.
+	 * @return self For chaining.
+	 */
+	public function replace_html( string $pattern_slug, string $block_type, int $occurrence, string $html ) {
+		$this->merge_transformation( $pattern_slug, $block_type, $occurrence, [
+			'innerHTML' => $html,
+		] );
+
+		return $this;
+	}
+
+	/**
 	 * Apply a callback transformation to a specific block type within a pattern.
 	 *
 	 * @param string   $pattern_slug Source pattern slug.
