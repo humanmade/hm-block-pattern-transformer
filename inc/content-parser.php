@@ -123,32 +123,109 @@ function convert_embed_url_to_canonical( string $url ) {
  * @return string Provider slug.
  */
 function get_embed_provider_name( string $url ) : string {
-	if ( strpos( $url, 'youtube.com' ) !== false || strpos( $url, 'youtu.be' ) !== false ) {
+	if ( str_contains( $url, 'youtube.com' ) || str_contains( $url, 'youtu.be' ) ) {
 		return 'youtube';
 	}
-	if ( strpos( $url, 'vimeo.com' ) !== false ) {
+	if ( str_contains( $url, 'vimeo.com' ) ) {
 		return 'vimeo';
 	}
-	if ( strpos( $url, 'twitter.com' ) !== false || strpos( $url, 'x.com' ) !== false ) {
+	if ( str_contains( $url, 'twitter.com' ) || str_contains( $url, 'x.com' ) ) {
 		return 'twitter';
 	}
-	if ( strpos( $url, 'facebook.com' ) !== false ) {
+	if ( str_contains( $url, 'facebook.com' ) ) {
 		return 'facebook';
 	}
-	if ( strpos( $url, 'instagram.com' ) !== false ) {
+	if ( str_contains( $url, 'instagram.com' ) ) {
 		return 'instagram';
 	}
-	if ( strpos( $url, 'soundcloud.com' ) !== false ) {
+	if ( str_contains( $url, 'soundcloud.com' ) ) {
 		return 'soundcloud';
 	}
-	if ( strpos( $url, 'spotify.com' ) !== false ) {
+	if ( str_contains( $url, 'spotify.com' ) ) {
 		return 'spotify';
 	}
-	if ( strpos( $url, 'wistia.com' ) !== false ) {
+	if ( str_contains( $url, 'wistia.com' ) ) {
 		return 'wistia';
 	}
 
 	return 'generic';
+}
+
+/**
+ * Get the embed type for a provider.
+ *
+ * WordPress embed blocks use a 'type' attribute to categorize embeds.
+ * Most are 'video' or 'rich' depending on the provider.
+ *
+ * @param string $provider Provider slug from get_embed_provider_name().
+ * @return string Embed type ('video', 'rich', or 'wp-embed').
+ */
+function get_embed_type( string $provider ) : string {
+	$video_providers = [ 'youtube', 'vimeo', 'wistia' ];
+	$rich_providers = [ 'twitter', 'facebook', 'instagram', 'spotify', 'soundcloud' ];
+
+	if ( in_array( $provider, $video_providers, true ) ) {
+		return 'video';
+	}
+
+	if ( in_array( $provider, $rich_providers, true ) ) {
+		return 'rich';
+	}
+
+	return 'wp-embed';
+}
+
+/**
+ * Create an embed block for a given URL.
+ *
+ * Produces consistent embed block markup used by both convert_html_to_embed_block()
+ * and convert_iframe_element().
+ *
+ * @param string $url      Canonical embed URL.
+ * @param string $provider Provider slug from get_embed_provider_name().
+ * @return array Embed block array.
+ */
+function create_embed_block( string $url, string $provider ) : array {
+	$embed_type = get_embed_type( $provider );
+
+	$attrs = [
+		'url'              => $url,
+		'type'             => $embed_type,
+		'providerNameSlug' => $provider,
+		'responsive'       => true,
+	];
+
+	if ( $embed_type === 'video' ) {
+		$attrs['className'] = 'wp-embed-aspect-16-9 wp-has-aspect-ratio';
+	}
+
+	$class_parts = [
+		'wp-block-embed',
+		'is-type-' . $embed_type,
+		'is-provider-' . $provider,
+		'wp-block-embed-' . $provider,
+	];
+
+	if ( $embed_type === 'video' ) {
+		$class_parts[] = 'wp-embed-aspect-16-9';
+		$class_parts[] = 'wp-has-aspect-ratio';
+	}
+
+	$figure_class = implode( ' ', $class_parts );
+
+	$html = sprintf(
+		'<figure class="%s"><div class="wp-block-embed__wrapper">%s</div></figure>',
+		esc_attr( $figure_class ),
+		"\n" . esc_url( $url ) . "\n"
+	);
+
+	return [
+		'blockName'    => 'core/embed',
+		'attrs'        => $attrs,
+		'innerBlocks'  => [],
+		'innerHTML'    => $html,
+		'innerContent' => [ $html ],
+	];
 }
 
 /**
@@ -169,37 +246,10 @@ function convert_html_to_embed_block( array $block ) {
 		return null;
 	}
 
-	// Get the provider name for the embed block type.
 	$url = $embed_data['url'];
 	$provider = get_embed_provider_name( $url );
 
-	// Create embed block with minimal structure for proper frontend rendering.
-	// WordPress will fetch the oEmbed HTML when rendering on frontend.
-	return [
-		'blockName' => 'core/embed',
-		'attrs' => [
-			'url' => $url,
-			'type' => 'video',
-			'providerNameSlug' => $provider,
-			'responsive' => true,
-			'className' => 'wp-embed-aspect-16-9 wp-has-aspect-ratio',
-		],
-		'innerBlocks' => [],
-		'innerHTML' => sprintf(
-			'<figure class="wp-block-embed is-type-video is-provider-%s wp-block-embed-%s wp-embed-aspect-16-9 wp-has-aspect-ratio"><div class="wp-block-embed__wrapper">%s</div></figure>',
-			esc_attr( $provider ),
-			esc_attr( $provider ),
-			"\n" . esc_url( $url ) . "\n"
-		),
-		'innerContent' => [
-			sprintf(
-				'<figure class="wp-block-embed is-type-video is-provider-%s wp-block-embed-%s wp-embed-aspect-16-9 wp-has-aspect-ratio"><div class="wp-block-embed__wrapper">%s</div></figure>',
-				esc_attr( $provider ),
-				esc_attr( $provider ),
-				"\n" . esc_url( $url ) . "\n"
-			),
-		],
-	];
+	return create_embed_block( $url, $provider );
 }
 
 /**
@@ -676,30 +726,7 @@ function convert_iframe_element( \DOMNode $node ) : array {
 		$url = $embed_data['url'];
 		$provider = get_embed_provider_name( $url );
 
-		return [
-			'blockName'    => 'core/embed',
-			'attrs'        => [
-				'url'              => $url,
-				'type'             => 'video',
-				'providerNameSlug' => $provider,
-				'responsive'       => true,
-			],
-			'innerBlocks'  => [],
-			'innerHTML'    => sprintf(
-				'<figure class="wp-block-embed is-type-video is-provider-%s wp-block-embed-%s"><div class="wp-block-embed__wrapper">%s</div></figure>',
-				esc_attr( $provider ),
-				esc_attr( $provider ),
-				"\n" . esc_url( $url ) . "\n"
-			),
-			'innerContent' => [
-				sprintf(
-					'<figure class="wp-block-embed is-type-video is-provider-%s wp-block-embed-%s"><div class="wp-block-embed__wrapper">%s</div></figure>',
-					esc_attr( $provider ),
-					esc_attr( $provider ),
-					"\n" . esc_url( $url ) . "\n"
-				),
-			],
-		];
+		return create_embed_block( $url, $provider );
 	}
 
 	// Fallback: create an HTML block with the iframe.
