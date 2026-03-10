@@ -56,6 +56,10 @@ class Template {
 	/**
 	 * Pattern slugs to replace with synced patterns.
 	 *
+	 * Each entry is keyed by pattern slug and contains:
+	 * - 'key': Unique key for the synced pattern
+	 * - 'title': Display title for the synced pattern
+	 *
 	 * @var array
 	 */
 	protected $synced_patterns = [];
@@ -121,6 +125,11 @@ class Template {
 
 		// Resolve remaining nested patterns.
 		$this->blocks = Pattern_Transformer\resolve_and_tag_patterns( $blocks );
+
+		// Tag top-level blocks with the template pattern slug so transformations
+		// targeting this pattern will apply. This is needed because resolve_and_tag_patterns
+		// only tags blocks when resolving nested pattern references.
+		$this->blocks = Pattern_Transformer\tag_blocks_recursively( $this->blocks, $this->pattern_slug );
 	}
 
 	/**
@@ -230,10 +239,15 @@ class Template {
 	 * (e.g., footer CTAs, resource sections).
 	 *
 	 * @param string $pattern_slug Pattern slug to convert to synced pattern.
+	 * @param string $key Unique key to identify this synced pattern instance.
+	 * @param string $title Display title for the synced pattern in the editor.
 	 * @return self For chaining.
 	 */
-	public function replace_with_synced_pattern( string $pattern_slug ) {
-		$this->synced_patterns[] = $pattern_slug;
+	public function replace_with_synced_pattern( string $pattern_slug, string $key, string $title ) {
+		$this->synced_patterns[ $pattern_slug ] = [
+			'key'   => $key,
+			'title' => $title,
+		];
 		return $this;
 	}
 
@@ -360,9 +374,15 @@ class Template {
 			if ( ( $block['blockName'] ?? '' ) === 'core/pattern' ) {
 				$slug = $block['attrs']['slug'] ?? '';
 
-				if ( in_array( $slug, $this->synced_patterns, true ) ) {
+				if ( isset( $this->synced_patterns[ $slug ] ) ) {
+					$synced_config = $this->synced_patterns[ $slug ];
+
 					// Get or create synced pattern.
-					$synced_id = Synced_Patterns\get_or_create( $slug );
+					$synced_id = Synced_Patterns\get_or_create(
+						$synced_config['key'],
+						$slug,
+						$synced_config['title']
+					);
 
 					if ( $synced_id ) {
 						// Replace with synced block reference.
@@ -448,6 +468,9 @@ class Template {
 	 * @return bool True if error occurred.
 	 */
 	public function has_error() {
+		// Load pattern to determine error state.
+		$this->load_pattern();
+
 		return $this->error !== null;
 	}
 

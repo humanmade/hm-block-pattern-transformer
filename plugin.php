@@ -22,16 +22,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Bootstrap the plugin.
- *
- * Loads all required files after plugins are loaded to ensure
- * WordPress core functions are available.
- */
-add_action( 'plugins_loaded', function() {
-	require_once __DIR__ . '/inc/acf.php';
-	require_once __DIR__ . '/inc/blocks.php';
-	require_once __DIR__ . '/inc/pattern-transformer.php';
-	require_once __DIR__ . '/inc/synced-patterns.php';
-	require_once __DIR__ . '/inc/class-template.php';
-} );
+// Load plugin files.
+require_once __DIR__ . '/inc/acf.php';
+require_once __DIR__ . '/inc/blocks.php';
+require_once __DIR__ . '/inc/pattern-transformer.php';
+require_once __DIR__ . '/inc/synced-patterns.php';
+require_once __DIR__ . '/inc/class-template.php';
