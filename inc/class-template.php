@@ -178,6 +178,25 @@ class Template {
 	}
 
 	/**
+	 * Search and replace within a specific block's HTML.
+	 *
+	 * @param string $pattern_slug Source pattern slug.
+	 * @param string $block_type Block type.
+	 * @param int    $occurrence Which occurrence (0-indexed).
+	 * @param string $search String to search for.
+	 * @param string $replace Replacement string.
+	 * @return self For chaining.
+	 */
+	public function search_replace( string $pattern_slug, string $block_type, int $occurrence, string $search, string $replace ) {
+		$this->merge_transformation( $pattern_slug, $block_type, $occurrence, [
+			'search'  => $search,
+			'replace' => $replace,
+		] );
+
+		return $this;
+	}
+
+	/**
 	 * Apply a callback transformation to a specific block type within a pattern.
 	 *
 	 * @param string   $pattern_slug Source pattern slug.
