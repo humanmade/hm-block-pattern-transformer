@@ -29,7 +29,7 @@ use HM\Block_Pattern_Transformer\Template;
 $transformer = new Template( 'theme/template-article' );
 
 $content = $transformer
-    ->replace_text( pattern_slug: 'theme/hero', block_type: 'core/heading', occurence: 0, text: 'Article Title' )
+    ->replace_text( pattern_slug: 'theme/hero', block_type: 'core/heading', occurrence: 0, text: 'Article Title' )
     ->replace_text( pattern_slug: 'theme/hero', block_type: 'core/paragraph', 0, 'Article description' )
     ->replace_placeholder( placeholder_name: 'content-placeholder', content_blocks: $content_blocks )
     ->get_content();
@@ -43,12 +43,12 @@ wp_update_post( [
 
 ## Namespaces
 
-The plugin provides four namespaces:
+The plugin provides the following namespaces:
 
 | Namespace | Purpose |
 |-----------|---------|
-| `HM\Block_Pattern_Transformer\ACF` | Extract data from ACF blocks |
 | `HM\Block_Pattern_Transformer\Blocks` | Create blocks programmatically |
+| `HM\Block_Pattern_Transformer\Content_Parser` | Parse and convert HTML to blocks |
 | `HM\Block_Pattern_Transformer\Pattern_Transformer` | Load and transform patterns |
 | `HM\Block_Pattern_Transformer\Synced_Patterns` | Create and reference synced patterns |
 
@@ -59,24 +59,6 @@ use HM\Block_Pattern_Transformer\Template;
 ```
 
 ## API Reference
-
-### ACF Namespace
-
-Extract data from Advanced Custom Fields blocks.
-
-```php
-use HM\Block_Pattern_Transformer\ACF;
-
-// Extract a single field
-$title = ACF\extract_field( $block, 'title', 'Default Title' );
-
-// Extract repeater field data
-$stats = ACF\extract_repeater( $block, 'featured_stats', [ 'number', 'label' ] );
-// Returns: [
-//   [ 'number' => '95%', 'label' => 'User satisfaction' ],
-//   [ 'number' => '50+', 'label' => 'Countries served' ],
-// ]
-```
 
 ### Blocks Namespace
 
@@ -106,8 +88,6 @@ $group = Blocks\create_wrapper_block(
     $inner_blocks
 );
 
-// Strip HTML from a value
-$plain_text = Blocks\strip_html( '<p>Some <strong>content</strong></p>' );
 ```
 
 ### Pattern_Transformer Namespace
@@ -149,7 +129,7 @@ Work with synced (reusable) patterns.
 use HM\Block_Pattern_Transformer\Synced_Patterns;
 
 // Get or create a synced pattern from a registered pattern
-$synced_id = Synced_Patterns\get_or_create( 'theme/footer-cta' );
+$synced_id = Synced_Patterns\get_or_create( 'site-footer-cta', 'theme/footer-cta', 'Footer CTA' );
 
 // Create a block reference to a synced pattern
 $block = Synced_Patterns\create_block_reference( $synced_id );
@@ -189,7 +169,7 @@ $content = $transformer
     ->replace_placeholder( 'content-placeholder', $content_blocks )
 
     // Convert pattern references to synced patterns
-    ->replace_with_synced_pattern( 'theme/footer-cta' )
+    ->replace_with_synced_pattern( 'theme/footer-cta', 'site-footer-cta', 'Footer CTA' )
 
     // Get the final content
     ->get_content();
@@ -254,13 +234,6 @@ Transformations target blocks by:
 Transform old content structures into new pattern-based layouts:
 
 ```php
-// Parse old content
-$old_blocks = parse_blocks( $old_post->post_content );
-
-// Extract data from ACF blocks
-$title = ACF\extract_field( $hero_block, 'title' );
-$stats = ACF\extract_repeater( $hero_block, 'stats', [ 'number', 'label' ] );
-
 // Transform into new pattern
 $transformer = new Template( 'theme/template-article' );
 $new_content = $transformer
