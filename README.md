@@ -29,9 +29,9 @@ use HM\Block_Pattern_Transformer\Template;
 $transformer = new Template( 'theme/template-article' );
 
 $content = $transformer
-    ->replace_text( pattern_slug: 'theme/hero', block_type: 'core/heading', occurrence: 0, text: 'Article Title' )
-    ->replace_text( pattern_slug: 'theme/hero', block_type: 'core/paragraph', 0, 'Article description' )
-    ->replace_placeholder( placeholder_name: 'content-placeholder', content_blocks: $content_blocks )
+    ->replace_text( 'theme/hero', 'core/heading', occurrence: 0, text: 'Article Title' )
+    ->replace_text( 'theme/hero', 'core/paragraph', occurrence: 0, text: 'Article description' )
+    ->replace_placeholder( 'content-placeholder', $content_blocks )
     ->get_content();
 
 // Use the transformed content
@@ -81,11 +81,11 @@ $block = Blocks\create_block( 'theme/hero', [ 'className' => 'is-featured' ] );
 
 // Create a block with wrapper HTML and inner blocks
 $group = Blocks\create_wrapper_block(
-    'core/group',
-    '<div class="wp-block-group">',
-    '</div>',
-    [ 'className' => 'my-group' ],
-    $inner_blocks
+    block_name: 'core/group',
+    opening_html: '<div class="wp-block-group">',
+    closing_html: '</div>',
+    attrs: [ 'className' => 'my-group' ],
+    inner_blocks: $inner_blocks
 );
 
 ```
@@ -129,7 +129,7 @@ Work with synced (reusable) patterns.
 use HM\Block_Pattern_Transformer\Synced_Patterns;
 
 // Get or create a synced pattern from a registered pattern
-$synced_id = Synced_Patterns\get_or_create( 'site-footer-cta', 'theme/footer-cta', 'Footer CTA' );
+$synced_id = Synced_Patterns\get_or_create( key: 'site-footer-cta', pattern_slug: 'theme/footer-cta', title: 'Footer CTA' );
 
 // Create a block reference to a synced pattern
 $block = Synced_Patterns\create_block_reference( $synced_id );
@@ -146,11 +146,11 @@ $transformer = new Template( 'theme/template-article' );
 
 $content = $transformer
     // Replace text in specific blocks
-    ->replace_text( 'theme/hero', 'core/heading', 0, 'Article Title' )
-    ->replace_text( 'theme/hero', 'core/paragraph', 0, 'Description' )
+    ->replace_text( 'theme/hero', 'core/heading', occurrence: 0, text: 'Article Title' )
+    ->replace_text( 'theme/hero', 'core/paragraph', occurrence: 0, text: 'Description' )
 
     // Replace block attributes
-    ->replace_attributes( 'theme/hero', 'core/image', 0, [
+    ->replace_attributes( 'theme/hero', 'core/image', occurrence: 0, attrs: [
         'id' => $image_id,
         'url' => $image_url,
     ] )
@@ -162,14 +162,14 @@ $content = $transformer
     } )
 
     // Remove blocks conditionally
-    ->remove_if_empty( 'theme/hero', 'core/paragraph', 1, $subtitle )
-    ->remove_if( 'theme/video', 'core/group', 0, fn() => empty( $video_url ) )
+    ->remove_if_empty( 'theme/hero', 'core/paragraph', occurrence: 1, value: $subtitle )
+    ->remove_if( 'theme/video', 'core/group', occurrence: 0, condition: fn() => empty( $video_url ) )
 
     // Replace placeholder with content
     ->replace_placeholder( 'content-placeholder', $content_blocks )
 
     // Convert pattern references to synced patterns
-    ->replace_with_synced_pattern( 'theme/footer-cta', 'site-footer-cta', 'Footer CTA' )
+    ->replace_with_synced_pattern( 'theme/footer-cta', key: 'site-footer-cta', title: 'Footer CTA' )
 
     // Get the final content
     ->get_content();
@@ -221,10 +221,10 @@ Transformations target blocks by:
 
 ```php
 // Target the first heading in 'theme/hero'
-->replace_text( 'theme/hero', 'core/heading', 0, 'Title' )
+->replace_text( 'theme/hero', 'core/heading', occurrence: 0, text: 'Title' )
 
 // Target the second paragraph in 'theme/hero'
-->replace_text( 'theme/hero', 'core/paragraph', 1, 'Subtitle' )
+->replace_text( 'theme/hero', 'core/paragraph', occurrence: 1, text: 'Subtitle' )
 ```
 
 ## Use Cases
@@ -237,7 +237,7 @@ Transform old content structures into new pattern-based layouts:
 // Transform into new pattern
 $transformer = new Template( 'theme/template-article' );
 $new_content = $transformer
-    ->replace_text( 'theme/hero', 'core/heading', 0, $title )
+    ->replace_text( 'theme/hero', 'core/heading', occurrence: 0, text: $title )
     ->replace_placeholder( 'content', $content_blocks )
     ->get_content();
 ```
@@ -249,9 +249,9 @@ Generate content from external data sources:
 ```php
 $transformer = new Template( 'theme/product-page' );
 $content = $transformer
-    ->replace_text( 'theme/hero', 'core/heading', 0, $product->name )
-    ->replace_text( 'theme/hero', 'core/paragraph', 0, $product->description )
-    ->replace_attributes( 'theme/hero', 'core/image', 0, [
+    ->replace_text( 'theme/hero', 'core/heading', occurrence: 0, text: $product->name )
+    ->replace_text( 'theme/hero', 'core/paragraph', occurrence: 0, text: $product->description )
+    ->replace_attributes( 'theme/hero', 'core/image', occurrence: 0, attrs: [
         'url' => $product->image_url,
         'alt' => $product->name,
     ] )
