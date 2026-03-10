@@ -18,11 +18,15 @@ $wp_tests_dir = getenv( 'WP_TESTS_DIR' );
 
 if ( ! $wp_tests_dir ) {
 	// Default location in wp-env.
+	$wp_tests_dir = '/wordpress-phpunit';
+}
+
+if ( ! file_exists( $wp_tests_dir . '/includes/functions.php' ) ) {
+	// Try alternative locations.
 	$wp_tests_dir = '/tmp/wordpress-tests-lib';
 }
 
 if ( ! file_exists( $wp_tests_dir . '/includes/functions.php' ) ) {
-	// Try alternative location.
 	$wp_tests_dir = '/var/www/html/wp-tests-lib';
 }
 

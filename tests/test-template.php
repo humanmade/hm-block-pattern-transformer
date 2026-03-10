@@ -390,4 +390,118 @@ class TemplateTest extends WP_UnitTestCase {
 		// Footer should be a synced reference.
 		$this->assertStringContainsString( 'wp:block', $content );
 	}
+
+	/**
+	 * Test replace_text and replace_attributes on the same block occurrence.
+	 *
+	 * Previously these overwrote each other — only the last call would take effect.
+	 */
+	public function test_replace_text_and_attributes_on_same_occurrence() {
+		$template = new Template( 'test/simple-heading' );
+
+		$content = $template
+			->replace_text( 'test/simple-heading', 'core/heading', 0, 'Updated Title' )
+			->replace_attributes( 'test/simple-heading', 'core/heading', 0, [
+				'level' => 3,
+			] )
+			->get_content();
+
+		// Both transformations should be applied.
+		$this->assertStringContainsString( 'Updated Title', $content );
+		$this->assertStringContainsString( '"level":3', $content );
+	}
+
+	/**
+	 * Test replace_attributes and replace_text on the same occurrence (reverse order).
+	 */
+	public function test_replace_attributes_then_text_on_same_occurrence() {
+		$template = new Template( 'test/simple-heading' );
+
+		$content = $template
+			->replace_attributes( 'test/simple-heading', 'core/heading', 0, [
+				'level' => 4,
+			] )
+			->replace_text( 'test/simple-heading', 'core/heading', 0, 'Also Updated' )
+			->get_content();
+
+		// Both transformations should be applied regardless of order.
+		$this->assertStringContainsString( 'Also Updated', $content );
+		$this->assertStringContainsString( '"level":4', $content );
+	}
+
+	/**
+	 * Test transform_callback does not wipe per-occurrence transformations.
+	 */
+	public function test_transform_callback_preserves_occurrence_transforms() {
+		$template = new Template( 'test/hero' );
+
+		$callback_ran = false;
+
+		$content = $template
+			->replace_text( 'test/hero', 'core/paragraph', 0, 'Replaced first paragraph' )
+			->transform_callback( 'test/hero', 'core/paragraph', function( $block ) use ( &$callback_ran ) {
+				$callback_ran = true;
+				return $block;
+			} )
+			->get_content();
+
+		// The per-occurrence text replacement should still work.
+		$this->assertStringContainsString( 'Replaced first paragraph', $content );
+		// The callback should also have run.
+		$this->assertTrue( $callback_ran );
+	}
+
+	/**
+	 * Test replace_html replaces full block innerHTML.
+	 */
+	public function test_replace_html() {
+		$template = new Template( 'test/simple-heading' );
+
+		$content = $template
+			->replace_html( 'test/simple-heading', 'core/paragraph', 0, '<p>Completely new HTML.</p>' )
+			->get_content();
+
+		$this->assertStringContainsString( 'Completely new HTML.', $content );
+		$this->assertStringNotContainsString( 'Test paragraph content', $content );
+	}
+
+	/**
+	 * Test search_replace within a block.
+	 */
+	public function test_search_replace() {
+		$template = new Template( 'test/simple-heading' );
+
+		$content = $template
+			->search_replace( 'test/simple-heading', 'core/paragraph', 0, 'Test paragraph', 'Modified paragraph' )
+			->get_content();
+
+		$this->assertStringContainsString( 'Modified paragraph content.', $content );
+		$this->assertStringNotContainsString( 'Test paragraph content.', $content );
+	}
+
+	/**
+	 * Test get_content returns WP_Error for missing pattern.
+	 */
+	public function test_get_content_returns_wp_error_for_missing_pattern() {
+		$template = new Template( 'nonexistent/pattern' );
+
+		$content = $template->get_content();
+
+		$this->assertInstanceOf( \WP_Error::class, $content );
+		$this->assertEquals( 'pattern_not_found', $content->get_error_code() );
+	}
+
+	/**
+	 * Test that serialized output uses literal ampersands (not \u0026).
+	 */
+	public function test_get_content_serializes_ampersands_correctly() {
+		$template = new Template( 'test/simple-heading' );
+
+		$content = $template
+			->replace_text( 'test/simple-heading', 'core/heading', 0, 'Tom & Jerry' )
+			->get_content();
+
+		$this->assertStringContainsString( 'Tom & Jerry', $content );
+		$this->assertStringNotContainsString( '\\u0026', $content );
+	}
 }

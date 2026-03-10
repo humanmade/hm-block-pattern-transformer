@@ -170,7 +170,7 @@ function apply_pattern_transformations( array $blocks, array $transformations, a
 			if ( ! empty( $block_name ) && isset( $pattern_transforms[ $block_name ] ) ) {
 				$block_transform = $pattern_transforms[ $block_name ];
 
-				// If it's an array of transformations by occurrence.
+				// Apply per-occurrence transformation if one exists.
 				if ( isset( $block_transform[ $occurrence ] ) ) {
 					$transform = $block_transform[ $occurrence ];
 
@@ -180,8 +180,18 @@ function apply_pattern_transformations( array $blocks, array $transformations, a
 					} else {
 						$block = apply_block_transformation( $block, $transform );
 					}
-				} elseif ( ! isset( $block_transform[0] ) ) {
-					// Single transformation for all occurrences.
+				}
+
+				// Apply block-type-level callback (applies to all occurrences).
+				// This runs in addition to any per-occurrence transform above.
+				if ( ! $should_delete && isset( $block_transform['callback'] ) && is_callable( $block_transform['callback'] ) ) {
+					$block = $block_transform['callback']( $block );
+				}
+
+				// If no per-occurrence or callback transform matched, try as a
+				// single transformation for all occurrences (non-callback keys
+				// like _delete, textContent, etc. at the block-type level).
+				if ( ! $should_delete && ! isset( $block_transform[ $occurrence ] ) && ! isset( $block_transform['callback'] ) && ! isset( $block_transform[0] ) ) {
 					if ( isset( $block_transform['_delete'] ) && $block_transform['_delete'] === true ) {
 						$should_delete = true;
 					} else {
@@ -311,9 +321,10 @@ function update_block_text_content( array $block, string $new_text ) : array {
 	// Collect all attributes.
 	foreach ( $processor->get_attribute_names_with_prefix( '' ) as $attr_name ) {
 		$attr_value = $processor->get_attribute( $attr_name );
-		if ( null !== $attr_value ) {
+		if ( is_string( $attr_value ) ) {
 			$attributes .= sprintf( ' %s="%s"', $attr_name, esc_attr( $attr_value ) );
 		} else {
+			// Boolean attribute (true) or missing value (null).
 			$attributes .= sprintf( ' %s', $attr_name );
 		}
 	}
@@ -384,7 +395,12 @@ function rebuild_inner_content( array $block ) : array {
 
 	foreach ( $processor->get_attribute_names_with_prefix( '' ) as $attr_name ) {
 		$attr_value = $processor->get_attribute( $attr_name );
-		$attributes .= sprintf( ' %s="%s"', $attr_name, esc_attr( $attr_value ) );
+		if ( is_string( $attr_value ) ) {
+			$attributes .= sprintf( ' %s="%s"', $attr_name, esc_attr( $attr_value ) );
+		} else {
+			// Boolean attribute (true) or missing value (null).
+			$attributes .= sprintf( ' %s', $attr_name );
+		}
 	}
 
 	$opening_tag = "<{$tag_name}{$attributes}>";
