@@ -309,13 +309,14 @@ function create_freeform_block( string $html ) : array {
 /**
  * Convert a heading element to a heading block.
  *
- * @param \DOMNode     $node Heading element.
- * @param \DOMDocument $dom  Parent document.
+ * @param \DOMNode     $node    Heading element.
+ * @param \DOMDocument $dom     Parent document.
+ * @param array        $options Processing options.
  * @return array Heading block.
  */
-function convert_heading_element( \DOMNode $node, \DOMDocument $dom ) : array {
+function convert_heading_element( \DOMNode $node, \DOMDocument $dom, array $options ) : array {
 	$level = (int) substr( $node->nodeName, 1 );
-	$content = get_node_inner_html( $node, $dom, [] );
+	$content = get_node_inner_html( $node, $dom, $options );
 
 	// Strip <strong> tags from heading content (common in classic editor).
 	$content = preg_replace( '/<strong>(.*?)<\/strong>/is', '$1', $content );
@@ -750,7 +751,7 @@ function convert_dom_node_to_block( \DOMNode $node, \DOMDocument $dom, array $op
 		case 'h4':
 		case 'h5':
 		case 'h6':
-			return convert_heading_element( $node, $dom );
+			return convert_heading_element( $node, $dom, $options );
 
 		case 'p':
 			return convert_paragraph_element( $node, $dom, $options );
