@@ -170,7 +170,7 @@ function apply_pattern_transformations( array $blocks, array $transformations, a
 			if ( ! empty( $block_name ) && isset( $pattern_transforms[ $block_name ] ) ) {
 				$block_transform = $pattern_transforms[ $block_name ];
 
-				// If it's an array of transformations by occurrence.
+				// Apply per-occurrence transformation if one exists.
 				if ( isset( $block_transform[ $occurrence ] ) ) {
 					$transform = $block_transform[ $occurrence ];
 
@@ -180,8 +180,18 @@ function apply_pattern_transformations( array $blocks, array $transformations, a
 					} else {
 						$block = apply_block_transformation( $block, $transform );
 					}
-				} elseif ( ! isset( $block_transform[0] ) ) {
-					// Single transformation for all occurrences.
+				}
+
+				// Apply block-type-level callback (applies to all occurrences).
+				// This runs in addition to any per-occurrence transform above.
+				if ( ! $should_delete && isset( $block_transform['callback'] ) && is_callable( $block_transform['callback'] ) ) {
+					$block = $block_transform['callback']( $block );
+				}
+
+				// If no per-occurrence or callback transform matched, try as a
+				// single transformation for all occurrences (non-callback keys
+				// like _delete, textContent, etc. at the block-type level).
+				if ( ! $should_delete && ! isset( $block_transform[ $occurrence ] ) && ! isset( $block_transform['callback'] ) && ! isset( $block_transform[0] ) ) {
 					if ( isset( $block_transform['_delete'] ) && $block_transform['_delete'] === true ) {
 						$should_delete = true;
 					} else {
