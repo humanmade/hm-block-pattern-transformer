@@ -9,6 +9,7 @@
 
 namespace HM\Block_Pattern_Transformer;
 
+use HM\Block_Pattern_Transformer\Content_Parser;
 use HM\Block_Pattern_Transformer\Pattern_Transformer;
 use HM\Block_Pattern_Transformer\Synced_Patterns;
 use WP_Error;
@@ -437,8 +438,9 @@ class Template {
 		// Apply any pending transformations.
 		$this->apply_transformations();
 
-		// Serialize to markup.
-		return serialize_blocks( $this->blocks );
+		// Serialize to markup using the Content_Parser version which fixes
+		// JSON ampersand encoding to match the JavaScript block editor.
+		return Content_Parser\serialize_blocks( $this->blocks );
 	}
 
 	/**
