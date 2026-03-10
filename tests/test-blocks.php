@@ -133,15 +133,6 @@ class BlocksTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test strip_html removes tags.
-	 */
-	public function test_strip_html_removes_tags() {
-		$result = Blocks\strip_html( '<p>Some <strong>content</strong></p>' );
-
-		$this->assertEquals( 'Some content', $result );
-	}
-
-	/**
 	 * Test create_paragraph sanitizes disallowed HTML tags.
 	 */
 	public function test_create_paragraph_sanitizes_disallowed_tags() {

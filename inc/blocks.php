@@ -150,15 +150,3 @@ function create_wrapper_block( string $block_name, string $opening_html, string 
 		'innerContent' => $inner_content,
 	];
 }
-
-/**
- * Strip HTML tags from a value.
- *
- * Useful for extracting plain text from content that may contain HTML.
- *
- * @param string $value Value to strip.
- * @return string Plain text value.
- */
-function strip_html( string $value ) : string {
-	return wp_strip_all_tags( $value );
-}
