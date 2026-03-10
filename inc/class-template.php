@@ -143,17 +143,9 @@ class Template {
 	 * @return self For chaining.
 	 */
 	public function replace_text( string $pattern_slug, string $block_type, int $occurrence, string $text ) {
-		if ( ! isset( $this->transformations[ $pattern_slug ] ) ) {
-			$this->transformations[ $pattern_slug ] = [];
-		}
-
-		if ( ! isset( $this->transformations[ $pattern_slug ][ $block_type ] ) ) {
-			$this->transformations[ $pattern_slug ][ $block_type ] = [];
-		}
-
-		$this->transformations[ $pattern_slug ][ $block_type ][ $occurrence ] = [
+		$this->merge_transformation( $pattern_slug, $block_type, $occurrence, [
 			'textContent' => $text,
-		];
+		] );
 
 		return $this;
 	}
@@ -168,17 +160,9 @@ class Template {
 	 * @return self For chaining.
 	 */
 	public function replace_attributes( string $pattern_slug, string $block_type, int $occurrence, array $attrs ) {
-		if ( ! isset( $this->transformations[ $pattern_slug ] ) ) {
-			$this->transformations[ $pattern_slug ] = [];
-		}
-
-		if ( ! isset( $this->transformations[ $pattern_slug ][ $block_type ] ) ) {
-			$this->transformations[ $pattern_slug ][ $block_type ] = [];
-		}
-
-		$this->transformations[ $pattern_slug ][ $block_type ][ $occurrence ] = [
+		$this->merge_transformation( $pattern_slug, $block_type, $occurrence, [
 			'attrs' => $attrs,
-		];
+		] );
 
 		return $this;
 	}
@@ -192,13 +176,9 @@ class Template {
 	 * @return self For chaining.
 	 */
 	public function transform_callback( string $pattern_slug, string $block_type, callable $callback ) {
-		if ( ! isset( $this->transformations[ $pattern_slug ] ) ) {
-			$this->transformations[ $pattern_slug ] = [];
-		}
-
-		$this->transformations[ $pattern_slug ][ $block_type ] = [
+		$this->merge_transformation( $pattern_slug, $block_type, null, [
 			'callback' => $callback,
-		];
+		] );
 
 		return $this;
 	}
@@ -214,17 +194,9 @@ class Template {
 	 * @return self For chaining.
 	 */
 	public function remove_block( string $pattern_slug, string $block_type, int $occurrence ) {
-		if ( ! isset( $this->transformations[ $pattern_slug ] ) ) {
-			$this->transformations[ $pattern_slug ] = [];
-		}
-
-		if ( ! isset( $this->transformations[ $pattern_slug ][ $block_type ] ) ) {
-			$this->transformations[ $pattern_slug ][ $block_type ] = [];
-		}
-
-		$this->transformations[ $pattern_slug ][ $block_type ][ $occurrence ] = [
+		$this->merge_transformation( $pattern_slug, $block_type, $occurrence, [
 			'_delete' => true,
-		];
+		] );
 
 		return $this;
 	}
@@ -352,6 +324,43 @@ class Template {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Merge a transformation into the transformations array.
+	 *
+	 * Merges with any existing transformation for the same target, so multiple
+	 * calls (e.g. replace_text + replace_attributes) can be combined on the
+	 * same block occurrence.
+	 *
+	 * @param string   $pattern_slug Source pattern slug.
+	 * @param string   $block_type Block type.
+	 * @param int|null $occurrence Occurrence index, or null for all-occurrence transforms.
+	 * @param array    $transformation Transformation data to merge.
+	 */
+	protected function merge_transformation( string $pattern_slug, string $block_type, ?int $occurrence, array $transformation ) : void {
+		if ( ! isset( $this->transformations[ $pattern_slug ] ) ) {
+			$this->transformations[ $pattern_slug ] = [];
+		}
+
+		if ( ! isset( $this->transformations[ $pattern_slug ][ $block_type ] ) ) {
+			$this->transformations[ $pattern_slug ][ $block_type ] = [];
+		}
+
+		if ( $occurrence === null ) {
+			// All-occurrence transformation (e.g. callback).
+			$this->transformations[ $pattern_slug ][ $block_type ] = array_merge(
+				$this->transformations[ $pattern_slug ][ $block_type ],
+				$transformation
+			);
+		} else {
+			// Per-occurrence transformation.
+			$existing = $this->transformations[ $pattern_slug ][ $block_type ][ $occurrence ] ?? [];
+			$this->transformations[ $pattern_slug ][ $block_type ][ $occurrence ] = array_merge(
+				$existing,
+				$transformation
+			);
+		}
 	}
 
 	/**
