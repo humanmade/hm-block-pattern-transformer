@@ -41,13 +41,6 @@ class Template {
 	protected $transformations = [];
 
 	/**
-	 * Block type occurrence counters.
-	 *
-	 * @var array
-	 */
-	protected $counters = [];
-
-	/**
 	 * Error encountered during processing.
 	 *
 	 * @var WP_Error|null
