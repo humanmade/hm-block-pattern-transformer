@@ -6,10 +6,10 @@
  * These functions return properly structured block arrays that can be
  * serialized and used in post content.
  *
- * @package HM\Block_Pattern_Transformer
+ * @package HM\Rehydrator
  */
 
-namespace HM\Block_Pattern_Transformer\Blocks;
+namespace HM\Rehydrator\Blocks;
 
 /**
  * Create a heading block.
@@ -36,7 +36,7 @@ function create_heading( string $content, int $level = 2 ) : array {
  * Create a paragraph block.
  *
  * Content is sanitized using wp_kses. The allowed HTML tags can be filtered
- * via the 'hm.block_pattern_transformer.paragraph_allowed_html' hook.
+ * via the 'hm.rehydrator.paragraph_allowed_html' hook.
  *
  * @param string $content Paragraph content.
  * @return array Paragraph block array.
@@ -45,7 +45,7 @@ function create_paragraph( string $content ) : array {
 	$content = trim( $content );
 
 	// Sanitize HTML - allow common inline elements.
-	$allowed_html = apply_filters( 'hm.block_pattern_transformer.paragraph_allowed_html', [
+	$allowed_html = apply_filters( 'hm.rehydrator.paragraph_allowed_html', [
 		'a'      => [
 			'href'   => true,
 			'title'  => true,

@@ -5,17 +5,17 @@
  * Utilities for creating and referencing synced (reusable) patterns.
  * Synced patterns are stored as wp_block posts and can be reused across multiple posts.
  *
- * @package HM\Block_Pattern_Transformer
+ * @package HM\Rehydrator
  */
 
-namespace HM\Block_Pattern_Transformer\Synced_Patterns;
+namespace HM\Rehydrator\Synced_Patterns;
 
-use function HM\Block_Pattern_Transformer\Pattern_Transformer\get_pattern_by_slug;
+use function HM\Rehydrator\Pattern_Transformer\get_pattern_by_slug;
 
 /**
  * Meta key used to store the unique key for synced pattern lookup.
  */
-const SYNCED_PATTERN_KEY_META = '_hm_synced_pattern_key';
+const SYNCED_PATTERN_KEY_META = '_rehydrator_synced_pattern_key';
 
 /**
  * Find or create a synced (reusable) pattern.

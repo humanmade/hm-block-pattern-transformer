@@ -2,13 +2,13 @@
 /**
  * Pattern Transformer Integration Tests
  *
- * @package HM\Block_Pattern_Transformer\Tests
+ * @package HM\Rehydrator\Tests
  */
 
-namespace HM\Block_Pattern_Transformer\Tests;
+namespace HM\Rehydrator\Tests;
 
 use WP_UnitTestCase;
-use HM\Block_Pattern_Transformer\Pattern_Transformer;
+use HM\Rehydrator\Pattern_Transformer;
 
 /**
  * Test pattern transformer functions with real WordPress.

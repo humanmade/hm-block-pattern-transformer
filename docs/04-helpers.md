@@ -14,7 +14,7 @@ In addition to the `Template` class, the plugin provides four namespaces with ut
 ## Blocks
 
 ```php
-use HM\Block_Pattern_Transformer\Blocks;
+use HM\Rehydrator\Blocks;
 ```
 
 Functions for creating block arrays programmatically. These are designed for trusted content and apply `wp_kses` sanitization to paragraph content.
@@ -40,7 +40,7 @@ Creates a `core/heading` block. Strips any existing heading tags from `$content`
 $block = Blocks\create_paragraph( 'Some content here.' );
 ```
 
-Creates a `core/paragraph` block. Content is sanitized with `wp_kses` allowing common inline elements (`a`, `strong`, `em`, `br`, `code`, etc.). The allowed tags can be filtered via `hm.block_pattern_transformer.paragraph_allowed_html`.
+Creates a `core/paragraph` block. Content is sanitized with `wp_kses` allowing common inline elements (`a`, `strong`, `em`, `br`, `code`, etc.). The allowed tags can be filtered via `hm.rehydrator.paragraph_allowed_html`.
 
 ---
 
@@ -101,7 +101,7 @@ Creates a container block with inner blocks. Handles the `innerContent` structur
 ## Content_Parser
 
 ```php
-use HM\Block_Pattern_Transformer\Content_Parser;
+use HM\Rehydrator\Content_Parser;
 ```
 
 Functions for parsing and converting HTML content into block arrays. Designed for processing classic editor content, ACF HTML fields, and other legacy HTML during migration.
@@ -188,7 +188,7 @@ Use this instead of `serialize_blocks()` when you need the output to pass block 
 ## Synced_Patterns
 
 ```php
-use HM\Block_Pattern_Transformer\Synced_Patterns;
+use HM\Rehydrator\Synced_Patterns;
 ```
 
 Functions for creating and referencing [synced patterns](https://developer.wordpress.org/news/2023/03/synced-patterns-the-new-reusable-blocks/) (stored as `wp_block` posts).
@@ -232,7 +232,7 @@ This is what the `Template::replace_with_synced_pattern()` method uses internall
 ## Pattern_Transformer
 
 ```php
-use HM\Block_Pattern_Transformer\Pattern_Transformer;
+use HM\Rehydrator\Pattern_Transformer;
 ```
 
 Low-level functions for pattern loading and block tree manipulation. You won't typically need these directly — the `Template` class uses them internally — but they're available for custom workflows.

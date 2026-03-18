@@ -5,9 +5,9 @@ nav_order: 1
 permalink: /
 ---
 
-# Block Pattern Transformer
+# Rehydrator
 
-Block Pattern Transformer is a PHP library for WordPress that makes it easier to write content migration scripts targeting block-theme sites. It provides a fluent API for loading registered block patterns, populating them with content from your source data, and serializing the result to block markup ready to write to `post_content`.
+Rehydrator is a PHP library for WordPress that makes it easier to write content migration scripts targeting block-theme sites. It provides a fluent API for loading registered block patterns, populating them with content from your source data, and serializing the result to block markup ready to write to `post_content`.
 
 ## The problem it solves
 
@@ -15,7 +15,7 @@ When migrating a classic WordPress site to a block theme, the destination conten
 
 On the new block-theme site, a post's layout is defined as a [block pattern](https://developer.wordpress.org/block-editor/reference-guides/block-api/block-patterns/): a registered arrangement of blocks that serves as the template for each post type. The heading, standfirst, featured image slot, body area, and footer CTA each have a specific place in that structure.
 
-A content migration script needs to do the same thing the block editor does when a user fills in a new post — populate each of those slots with the right content. Block Pattern Transformer gives you an API to do that programmatically, targeting blocks by their pattern origin, block type, and position.
+A content migration script needs to do the same thing the block editor does when a user fills in a new post — populate each of those slots with the right content. Rehydrator gives you an API to do that programmatically, targeting blocks by their pattern origin, block type, and position.
 
 ## How it works
 
@@ -27,7 +27,7 @@ The plugin's transformation model works in four steps:
 4. **Get the result** — serialized block markup, ready to write to `post_content`.
 
 ```php
-use HM\Block_Pattern_Transformer\Template;
+use HM\Rehydrator\Template;
 
 $transformer = new Template( 'theme/template-article' );
 

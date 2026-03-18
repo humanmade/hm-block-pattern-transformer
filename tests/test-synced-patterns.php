@@ -2,13 +2,13 @@
 /**
  * Synced Patterns Tests
  *
- * @package HM\Block_Pattern_Transformer\Tests
+ * @package HM\Rehydrator\Tests
  */
 
-namespace HM\Block_Pattern_Transformer\Tests;
+namespace HM\Rehydrator\Tests;
 
 use WP_UnitTestCase;
-use HM\Block_Pattern_Transformer\Synced_Patterns;
+use HM\Rehydrator\Synced_Patterns;
 
 /**
  * Test synced pattern functions.

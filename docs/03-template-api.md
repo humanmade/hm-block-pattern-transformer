@@ -10,7 +10,7 @@ permalink: /template-api
 The `Template` class is the primary interface for pattern-based content transformation. It provides a fluent (chainable) API for loading a pattern, declaring transformations, and serializing the result.
 
 ```php
-use HM\Block_Pattern_Transformer\Template;
+use HM\Rehydrator\Template;
 
 $transformer = new Template( 'theme/template-article' );
 ```

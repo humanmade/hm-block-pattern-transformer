@@ -2,13 +2,13 @@
 /**
  * Content Parser Functions Tests
  *
- * @package HM\Block_Pattern_Transformer\Tests
+ * @package HM\Rehydrator\Tests
  */
 
-namespace HM\Block_Pattern_Transformer\Tests;
+namespace HM\Rehydrator\Tests;
 
 use WP_UnitTestCase;
-use HM\Block_Pattern_Transformer\Content_Parser;
+use HM\Rehydrator\Content_Parser;
 
 /**
  * Test content parsing and HTML-to-blocks conversion functions.

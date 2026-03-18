@@ -4,14 +4,14 @@
  *
  * Provides a fluent API for transforming block patterns with imported data.
  *
- * @package HM\Block_Pattern_Transformer
+ * @package HM\Rehydrator
  */
 
-namespace HM\Block_Pattern_Transformer;
+namespace HM\Rehydrator;
 
-use HM\Block_Pattern_Transformer\Content_Parser;
-use HM\Block_Pattern_Transformer\Pattern_Transformer;
-use HM\Block_Pattern_Transformer\Synced_Patterns;
+use HM\Rehydrator\Content_Parser;
+use HM\Rehydrator\Pattern_Transformer;
+use HM\Rehydrator\Synced_Patterns;
 use WP_Error;
 
 /**

@@ -2,13 +2,13 @@
 /**
  * Blocks Functions Tests
  *
- * @package HM\Block_Pattern_Transformer\Tests
+ * @package HM\Rehydrator\Tests
  */
 
-namespace HM\Block_Pattern_Transformer\Tests;
+namespace HM\Rehydrator\Tests;
 
 use WP_UnitTestCase;
-use HM\Block_Pattern_Transformer\Blocks;
+use HM\Rehydrator\Blocks;
 
 /**
  * Test block creation functions.
@@ -171,7 +171,7 @@ class BlocksTest extends WP_UnitTestCase {
 	 */
 	public function test_create_paragraph_filter_customizes_allowed_html() {
 		// Add a filter to allow <mark> tags.
-		add_filter( 'hm.block_pattern_transformer.paragraph_allowed_html', function( $allowed ) {
+		add_filter( 'hm.rehydrator.paragraph_allowed_html', function( $allowed ) {
 			$allowed['mark'] = [ 'class' => true ];
 			return $allowed;
 		} );
@@ -181,7 +181,7 @@ class BlocksTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( '<mark class="highlight">highlighted</mark>', $block['innerHTML'] );
 
 		// Clean up filter.
-		remove_all_filters( 'hm.block_pattern_transformer.paragraph_allowed_html' );
+		remove_all_filters( 'hm.rehydrator.paragraph_allowed_html' );
 	}
 
 	/**
@@ -189,7 +189,7 @@ class BlocksTest extends WP_UnitTestCase {
 	 */
 	public function test_create_paragraph_filter_restricts_allowed_html() {
 		// Add a filter to only allow plain text (no HTML).
-		add_filter( 'hm.block_pattern_transformer.paragraph_allowed_html', function() {
+		add_filter( 'hm.rehydrator.paragraph_allowed_html', function() {
 			return [];
 		} );
 
@@ -201,6 +201,6 @@ class BlocksTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'stripped', $block['innerHTML'] );
 
 		// Clean up filter.
-		remove_all_filters( 'hm.block_pattern_transformer.paragraph_allowed_html' );
+		remove_all_filters( 'hm.rehydrator.paragraph_allowed_html' );
 	}
 }

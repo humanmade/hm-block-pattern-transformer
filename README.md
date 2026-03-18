@@ -1,15 +1,15 @@
-# HM Block Pattern Transformer
+# Rehydrator
 
 Pattern-based content transformation for WordPress block migrations. Provides utilities for loading block patterns, resolving nested pattern references, and applying targeted transformations to populate templates with content.
 
-**[Full documentation →](https://humanmade.github.io/hm-block-pattern-transformer/)**
+**[Full documentation →](https://humanmade.github.io/rehydrator/)**
 
 ## Installation
 
 **Via Composer:**
 
 ```bash
-composer require humanmade/hm-block-pattern-transformer
+composer require humanmade/rehydrator
 ```
 
 **As a WordPress plugin:** Clone or download this repository to `wp-content/plugins/` and activate.
@@ -22,7 +22,7 @@ composer require humanmade/hm-block-pattern-transformer
 ## Quick Start
 
 ```php
-use HM\Block_Pattern_Transformer\Template;
+use HM\Rehydrator\Template;
 
 $transformer = new Template( 'theme/template-article' );
 
@@ -42,7 +42,7 @@ wp_update_post( [
 ] );
 ```
 
-For full API documentation including all transformation methods and helper namespaces, see the **[docs site](https://humanmade.github.io/hm-block-pattern-transformer/)**.
+For full API documentation including all transformation methods and helper namespaces, see the **[docs site](https://humanmade.github.io/rehydrator/)**.
 
 ## Development
 

@@ -1,21 +1,21 @@
 <?php
 /**
- * Plugin Name: HM Block Pattern Transformer
- * Plugin URI: https://github.com/humanmade/block-pattern-transformer
+ * Plugin Name: Rehydrator
+ * Plugin URI: https://github.com/humanmade/rehydrator
  * Description: Pattern-based content transformation for WordPress block migrations. Provides a fluent API for loading patterns, resolving nested references, and applying targeted transformations.
  * Version: 1.0.0
  * Author: Human Made
  * Author URI: https://humanmade.com
  * License: GPL-2.0-or-later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain: hm-block-pattern-transformer
+ * Text Domain: rehydrator
  * Requires at least: 6.0
  * Requires PHP: 8.0
  *
- * @package HM\Block_Pattern_Transformer
+ * @package HM\Rehydrator
  */
 
-namespace HM\Block_Pattern_Transformer;
+namespace HM\Rehydrator;
 
 // Prevent direct access.
 if ( ! defined( 'ABSPATH' ) ) {

@@ -4,7 +4,7 @@
  *
  * Loads WordPress test framework for integration testing with wp-env.
  *
- * @package HM\Block_Pattern_Transformer\Tests
+ * @package HM\Rehydrator\Tests
  */
 
 // Composer autoloader.

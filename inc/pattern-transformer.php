@@ -5,10 +5,10 @@
  * Load block patterns and replace placeholder content with actual data.
  * Handles pattern resolution (wp:pattern references) and transformations.
  *
- * @package HM\Block_Pattern_Transformer
+ * @package HM\Rehydrator
  */
 
-namespace HM\Block_Pattern_Transformer\Pattern_Transformer;
+namespace HM\Rehydrator\Pattern_Transformer;
 
 use WP_Block_Patterns_Registry;
 use WP_HTML_Tag_Processor;

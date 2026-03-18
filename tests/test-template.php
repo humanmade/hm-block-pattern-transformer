@@ -2,14 +2,14 @@
 /**
  * Template Class Tests
  *
- * @package HM\Block_Pattern_Transformer\Tests
+ * @package HM\Rehydrator\Tests
  */
 
-namespace HM\Block_Pattern_Transformer\Tests;
+namespace HM\Rehydrator\Tests;
 
 use WP_UnitTestCase;
-use HM\Block_Pattern_Transformer\Template;
-use HM\Block_Pattern_Transformer\Blocks;
+use HM\Rehydrator\Template;
+use HM\Rehydrator\Blocks;
 
 /**
  * Test Template class fluent API.

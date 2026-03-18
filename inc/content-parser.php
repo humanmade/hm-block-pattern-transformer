@@ -6,10 +6,10 @@
  * Handles mixed content (classic editor HTML and block content), detecting
  * freeform blocks, and converting classic HTML to proper block structures.
  *
- * @package HM\Block_Pattern_Transformer
+ * @package HM\Rehydrator
  */
 
-namespace HM\Block_Pattern_Transformer\Content_Parser;
+namespace HM\Rehydrator\Content_Parser;
 
 /**
  * Check if content has Gutenberg block markers.
@@ -308,7 +308,7 @@ function get_node_outer_html( \DOMNode $node, \DOMDocument $dom, array $options 
  * Create a paragraph block.
  *
  * Internal function for the content parser. For user-facing content creation
- * with sanitization, use HM\Block_Pattern_Transformer\Blocks\create_paragraph().
+ * with sanitization, use HM\Rehydrator\Blocks\create_paragraph().
  *
  * @param string $content Paragraph content.
  * @return array Paragraph block.

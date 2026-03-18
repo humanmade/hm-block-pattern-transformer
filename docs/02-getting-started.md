@@ -12,7 +12,7 @@ permalink: /getting-started
 **Via Composer (recommended):**
 
 ```bash
-composer require humanmade/hm-block-pattern-transformer
+composer require humanmade/rehydrator
 ```
 
 **Or as a WordPress plugin:**
@@ -61,8 +61,8 @@ In your patterns, use `metadata.name` on any block to create a named placeholder
 Use the `Template` class to load the pattern, apply your content, and get the result:
 
 ```php
-use HM\Block_Pattern_Transformer\Template;
-use HM\Block_Pattern_Transformer\Content_Parser;
+use HM\Rehydrator\Template;
+use HM\Rehydrator\Content_Parser;
 
 // Convert the old post's classic HTML to blocks.
 $body_blocks = Content_Parser\parse_content_with_conversion( $old_post->post_content );
@@ -112,7 +112,7 @@ Every transformation method targets a specific block by three coordinates:
 
 ## When to use it
 
-Block Pattern Transformer is purpose-built for **content migrations** where the destination site uses structured block layouts. It's most valuable when:
+Rehydrator is purpose-built for **content migrations** where the destination site uses structured block layouts. It's most valuable when:
 
 - You have multiple post types, each with a different block layout.
 - Source content comes from mixed origins — classic editor HTML, ACF fields, custom post meta, external data sources.
