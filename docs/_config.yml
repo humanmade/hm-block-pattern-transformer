@@ -1,0 +1,18 @@
+title: Block Pattern Transformer
+tagline: Pattern-based content transformation for WordPress block migrations.
+description: A PHP library for building migration scripts that populate block patterns with content during WordPress site migrations.
+author: Human Made
+baseurl: '/hm-block-pattern-transformer'
+url: 'https://humanmade.github.io'
+
+theme: just-the-hm-docs
+
+aux_links:
+  "Block Pattern Transformer on GitHub":
+    - https://github.com/humanmade/hm-block-pattern-transformer
+
+nav_external_links:
+  - title: GitHub source
+    url: https://github.com/humanmade/hm-block-pattern-transformer
+  - title: Issues
+    url: https://github.com/humanmade/hm-block-pattern-transformer/issues
