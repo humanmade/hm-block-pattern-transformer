@@ -12,7 +12,7 @@ permalink: /getting-started
 **Via Composer (recommended):**
 
 ```bash
-composer require humanmade/block-pattern-transformer
+composer require humanmade/hm-block-pattern-transformer
 ```
 
 **Or as a WordPress plugin:**

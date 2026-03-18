@@ -9,7 +9,7 @@ Pattern-based content transformation for WordPress block migrations. Provides ut
 **Via Composer:**
 
 ```bash
-composer require humanmade/block-pattern-transformer
+composer require humanmade/hm-block-pattern-transformer
 ```
 
 **As a WordPress plugin:** Clone or download this repository to `wp-content/plugins/` and activate.
