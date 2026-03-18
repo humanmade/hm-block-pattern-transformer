@@ -1,0 +1,19 @@
+---
+layout: default
+---
+
+{{ content }}
+
+{% if page.nav_order %}
+  {% assign next_nav_order = page.nav_order | plus: 1 %}
+  {% assign next_page = nil %}
+  {% for p in site.pages %}
+    {% if p.nav_order == next_nav_order %}
+      {% assign next_page = p %}
+    {% endif %}
+  {% endfor %}
+
+  {% if next_page %}
+<p><strong><a href="{{ next_page.url | prepend: site.baseurl }}">Next: {{ next_page.title }} &rarr;</a></strong></p>
+  {% endif %}
+{% endif %}

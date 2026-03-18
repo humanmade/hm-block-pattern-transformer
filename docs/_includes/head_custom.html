@@ -1,0 +1,47 @@
+<link rel="apple-touch-icon" sizes="180x180" href="{{ site.baseurl }}/assets/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ site.baseurl }}/assets/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ site.baseurl }}/assets/favicon/favicon-16x16.png">
+<link rel="manifest" href="{{ site.baseurl }}/assets/favicon/site.webmanifest">
+
+<style>
+.nav-list .nav-list .nav-list-link--in-page {
+  font-size: 0.875em;
+  line-height: 1.4;
+  min-height: auto;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const headings = document.querySelectorAll('#main-content h2, #main-content h3');
+  if (headings.length === 0) return;
+
+  const activeLi = document.querySelector('#site-nav .nav-list-item.active');
+  if (!activeLi) return;
+
+  const ul = document.createElement('ul');
+  ul.className = 'nav-list';
+
+  headings.forEach(function (h) {
+    if (!h.id) return;
+
+    const li = document.createElement('li');
+    li.className = 'nav-list-item' + (h.tagName === 'H3' ? ' pl-4' : '');
+
+    const a = document.createElement('a');
+    a.className = 'nav-list-link nav-list-link--in-page';
+    a.href = '#' + h.id;
+    const clone = h.cloneNode(true);
+    const anchorLink = clone.querySelector('.anchor-heading');
+    if (anchorLink) anchorLink.remove();
+    a.textContent = clone.textContent.trim();
+
+    li.appendChild(a);
+    ul.appendChild(li);
+  });
+
+  activeLi.appendChild(ul);
+});
+</script>
