@@ -92,6 +92,8 @@ wp_update_post( [
 
 The plugin handles pattern resolution, transformation targeting, and serialization. The result is block markup that exactly matches the structure your block theme expects.
 
+This does not implement the script for running the imports itself. It's intentionally nonopinionated, and while it was designed for and works well alongside [HM Content Import](https://github.com/humanmade/hm-content-import), it can hook into most integration frameworks - or even be used for content transformations in-place while a site is live.
+
 ## Transformation targeting
 
 Every transformation method targets a specific block by three coordinates:
