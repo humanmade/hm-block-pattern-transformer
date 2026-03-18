@@ -7,6 +7,9 @@ url: 'https://humanmade.github.io'
 
 theme: just-the-hm-docs
 
+plugins:
+  - jekyll-include-cache
+
 aux_links:
   "Block Pattern Transformer on GitHub":
     - https://github.com/humanmade/hm-block-pattern-transformer
