@@ -48,7 +48,7 @@ This is the same pattern your migration script will target — the editor and th
 
 ### 3. Mark content insertion points with named placeholders
 
-In your patterns, use `metadata.name` on any block to create a named placeholder. This marks where the migrated body content should be inserted:
+In your patterns, use `metadata.name` on any block to create a named placeholder. This can be used as a hook to mark where migrated body content should be inserted:
 
 ```html
 <!-- wp:paragraph {"metadata":{"name":"content-placeholder"}} -->

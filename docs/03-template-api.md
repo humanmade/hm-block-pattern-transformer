@@ -82,6 +82,8 @@ Replace the full `innerHTML` of a specific block. Use this when you need to cont
 )
 ```
 
+_Note that the replacement HTML is not escaped or sanitized - you must handle data sanitization yourself._ 
+
 | Parameter | Type | Description |
 |---|---|---|
 | `$pattern_slug` | `string` | Slug of the pattern containing the target block |
@@ -238,7 +240,7 @@ The placeholder block is replaced entirely by the provided blocks. If `$content_
 
 Convert a pattern reference in the template to a [synced pattern](https://developer.wordpress.org/news/2023/03/synced-patterns-the-new-reusable-blocks/) (formerly "reusable block") instead of resolving it inline.
 
-Use this for sections that should stay shared and editable across multiple posts — footer CTAs, resource sections, etc.
+Use this for sections that should stay shared and editable across multiple posts — sidebars, footer CTAs, resource sections, etc.
 
 ```php
 ->replace_with_synced_pattern(
