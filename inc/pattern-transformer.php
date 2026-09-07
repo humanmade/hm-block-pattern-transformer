@@ -10,6 +10,7 @@
 
 namespace HM\Rehydrator\Pattern_Transformer;
 
+use HM\Rehydrator\Blocks;
 use WP_Block_Patterns_Registry;
 use WP_HTML_Tag_Processor;
 
@@ -239,8 +240,7 @@ function apply_pattern_transformations( array $blocks, array $transformations, a
 function apply_block_transformation( array $block, array $transformation ) : array {
 	// Replace entire innerHTML.
 	if ( isset( $transformation['innerHTML'] ) ) {
-		$block['innerHTML'] = $transformation['innerHTML'];
-		$block['innerContent'] = [ $transformation['innerHTML'] ];
+		$block = Blocks\set_inner_html( $block, $transformation['innerHTML'] );
 	}
 
 	// Replace or merge attributes.
@@ -366,10 +366,7 @@ function update_block_text_content( array $block, string $new_text ) : array {
 	// Use lowercase tag names for consistency with WordPress standards.
 	$html = sprintf( '<%s%s>%s</%s>', $tag_name_lower, $attributes, $new_text, $tag_name_lower );
 
-	$block['innerHTML'] = $html;
-	$block['innerContent'] = [ $html ];
-
-	return $block;
+	return Blocks\set_inner_html( $block, $html );
 }
 
 /**
