@@ -434,6 +434,21 @@ class ContentParserTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test strip_table_presentation_attributes with single-quoted and unquoted values.
+	 */
+	public function test_strip_table_presentation_attributes_quoting_styles() {
+		$html = "<table border='1' cellpadding=2 cellspacing = '0' bgcolor=#ffffff>"
+			. "<tr><td valign='middle' align='left'>Cell</td></tr></table>";
+
+		$stripped = Content_Parser\strip_table_presentation_attributes( $html );
+
+		$this->assertSame(
+			"<table><tr><td align='left'>Cell</td></tr></table>",
+			$stripped
+		);
+	}
+
+	/**
 	 * Test convert_html_to_blocks with preformatted text.
 	 */
 	public function test_convert_html_to_blocks_pre() {

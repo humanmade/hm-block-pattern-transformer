@@ -685,12 +685,16 @@ function convert_table_element( \DOMNode $node, \DOMDocument $dom, array $option
  * their presence in `innerHTML` fails block validation on load (the parsed HTML
  * won't match a re-render of `attrs`).
  *
+ * Attribute values may be double-quoted, single-quoted, or unquoted, since legacy
+ * markup is inconsistent and callers may pass HTML that has not been normalised by
+ * DOM serialisation.
+ *
  * @param string $html Table inner markup (or any HTML fragment).
  * @return string
  */
 function strip_table_presentation_attributes( string $html ) : string {
 	return (string) preg_replace(
-		'/\s+(?:valign|bgcolor|border|cellpadding|cellspacing)="[^"]*"/i',
+		'/\s+(?:valign|bgcolor|border|cellpadding|cellspacing)\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s"\'>]+)/i',
 		'',
 		$html
 	);
