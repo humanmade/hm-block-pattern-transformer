@@ -74,6 +74,18 @@ Creates a leaf block (no inner blocks). Use this for any block type that doesn't
 
 ---
 
+### `set_inner_html()`
+
+```php
+$block = Blocks\set_inner_html( $block, '<p>Updated copy</p>' );
+```
+
+Replaces the HTML of a leaf block, updating `innerHTML` and `innerContent` in sync. Returns the updated block. An empty string clears `innerContent`, matching the results of `create_block()`.
+
+Only for use with leaf blocks (blocks without inner children). `map_inner_blocks()` or `rebuild_inner_content()` should be used for container blocks, to properly handle inner block placeholders.
+
+---
+
 ### `create_wrapper_block()`
 
 ```php
