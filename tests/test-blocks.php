@@ -110,6 +110,35 @@ class BlocksTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test set_inner_html updates innerHTML and innerContent together.
+	 */
+	public function test_set_inner_html_updates_both_fields() {
+		$block = Blocks\create_block( 'core/paragraph', [ 'dropCap' => true ], '<p>Old</p>' );
+
+		$updated = Blocks\set_inner_html( $block, '<p>New</p>' );
+
+		$this->assertEquals( '<p>New</p>', $updated['innerHTML'] );
+		$this->assertEquals( [ '<p>New</p>' ], $updated['innerContent'] );
+		$this->assertEquals( 'core/paragraph', $updated['blockName'] );
+		$this->assertEquals( [ 'dropCap' => true ], $updated['attrs'] );
+
+		// Input is not mutated.
+		$this->assertEquals( '<p>Old</p>', $block['innerHTML'] );
+	}
+
+	/**
+	 * Test set_inner_html with an empty string matches create_block's shape.
+	 */
+	public function test_set_inner_html_empty_string_clears_inner_content() {
+		$block = Blocks\create_block( 'core/paragraph', [], '<p>Old</p>' );
+
+		$updated = Blocks\set_inner_html( $block, '' );
+
+		$this->assertSame( '', $updated['innerHTML'] );
+		$this->assertSame( [], $updated['innerContent'] );
+	}
+
+	/**
 	 * Test create_wrapper_block creates block with wrapper HTML.
 	 */
 	public function test_create_wrapper_block_returns_proper_structure() {
