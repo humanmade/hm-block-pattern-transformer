@@ -121,6 +121,24 @@ function create_block( string $block_name, array $attrs = [], string $inner_html
 }
 
 /**
+ * Replace a leaf block's HTML.
+ *
+ * Update innerHTML and innerContent together in sync. Only for use with blocks
+ * that don't contain inner blocks of their own, because setting content to
+ * a singular string would overwrite the null placeholders used for children.
+ *
+ * @param array  $block Leaf block to update.
+ * @param string $html  New HTML content.
+ * @return array Updated block.
+ */
+function set_inner_html( array $block, string $html ) : array {
+	$block['innerHTML'] = $html;
+	$block['innerContent'] = empty( $html ) ? [] : [ $html ];
+
+	return $block;
+}
+
+/**
  * Create a block with wrapper HTML and inner blocks.
  *
  * The innerContent array should interleave static HTML with null placeholders
