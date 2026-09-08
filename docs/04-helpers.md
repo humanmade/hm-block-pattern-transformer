@@ -156,6 +156,8 @@ Convert classic HTML content to an array of blocks. Handles a wide range of HTML
 $blocks = Content_Parser\convert_html_to_blocks( $html );
 ```
 
+Output matches what each block's `save()` stores in `post_content` so that converted content will pass editor validation. Generated core block classes (`wp-block-heading`, `wp-block-list`, `wp-element-caption`, etc) are not included in `attrs['className']`, matching how the editor treats those classes as of WP 7.1.`add_block_class()` or `Template::add_class()` can be used to insert custom classes on top of these block defaults.
+
 ---
 
 ### `content_has_blocks()`

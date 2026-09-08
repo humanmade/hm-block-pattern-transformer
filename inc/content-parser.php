@@ -396,12 +396,16 @@ function convert_heading_element( \DOMNode $node, \DOMDocument $dom, array $opti
 	$content = preg_replace( '/<b>(.*?)<\/b>/is', '$1', $content );
 	$content = trim( $content );
 
+	// Match core's save() output where block classes are stored only in markup
+	// rather than mirrored to attrs['className'].
+	$html = sprintf( '<h%d class="wp-block-heading">%s</h%d>', $level, $content, $level );
+
 	return [
 		'blockName'    => 'core/heading',
 		'attrs'        => [ 'level' => $level ],
 		'innerBlocks'  => [],
-		'innerHTML'    => sprintf( '<h%d>%s</h%d>', $level, $content, $level ),
-		'innerContent' => [ sprintf( '<h%d>%s</h%d>', $level, $content, $level ) ],
+		'innerHTML'    => $html,
+		'innerContent' => [ $html ],
 	];
 }
 
@@ -479,7 +483,7 @@ function convert_list_element( \DOMNode $node, \DOMDocument $dom, string $tag_na
 
 	// Process list items into inner blocks.
 	$inner_blocks = [];
-	$list_html_parts = [ $is_ordered ? '<ol>' : '<ul>' ];
+	$list_html_parts = [ sprintf( '<%s class="wp-block-list">', $is_ordered ? 'ol' : 'ul' ) ];
 
 	foreach ( $node->childNodes as $child ) {
 		if ( $child->nodeType !== XML_ELEMENT_NODE || strtolower( $child->nodeName ) !== 'li' ) {
@@ -636,7 +640,7 @@ function convert_figure_element( \DOMNode $node, \DOMDocument $dom, array $optio
 			// Add caption to the figure HTML.
 			$block['innerHTML'] = str_replace(
 				'</figure>',
-				'<figcaption>' . $caption . '</figcaption></figure>',
+				'<figcaption class="wp-element-caption">' . $caption . '</figcaption></figure>',
 				$block['innerHTML']
 			);
 			$block['innerContent'] = [ $block['innerHTML'] ];

@@ -271,6 +271,13 @@ class ContentParserTest extends WP_UnitTestCase {
 		$this->assertEquals( 2, $blocks[0]['attrs']['level'] );
 		$this->assertEquals( 'core/heading', $blocks[1]['blockName'] );
 		$this->assertEquals( 3, $blocks[1]['attrs']['level'] );
+
+		// Markup must match core's save() output: the generated class lives
+		// in the markup only, never in attrs['className'].
+		$this->assertEquals( '<h2 class="wp-block-heading">Heading Two</h2>', $blocks[0]['innerHTML'] );
+		$this->assertEquals( [ '<h2 class="wp-block-heading">Heading Two</h2>' ], $blocks[0]['innerContent'] );
+		$this->assertEquals( '<h3 class="wp-block-heading">Heading Three</h3>', $blocks[1]['innerHTML'] );
+		$this->assertArrayNotHasKey( 'className', $blocks[0]['attrs'] );
 	}
 
 	/**
@@ -296,6 +303,13 @@ class ContentParserTest extends WP_UnitTestCase {
 		$this->assertEquals( 'core/list', $blocks[0]['blockName'] );
 		$this->assertArrayNotHasKey( 'ordered', $blocks[0]['attrs'] );
 		$this->assertCount( 2, $blocks[0]['innerBlocks'] );
+
+		$this->assertEquals(
+			[ '<ul class="wp-block-list">', null, null, '</ul>' ],
+			$blocks[0]['innerContent']
+		);
+		$this->assertArrayNotHasKey( 'className', $blocks[0]['attrs'] );
+		$this->assertEquals( '<li>Item one</li>', $blocks[0]['innerBlocks'][0]['innerHTML'] );
 	}
 
 	/**
@@ -308,6 +322,11 @@ class ContentParserTest extends WP_UnitTestCase {
 		$this->assertCount( 1, $blocks );
 		$this->assertEquals( 'core/list', $blocks[0]['blockName'] );
 		$this->assertTrue( $blocks[0]['attrs']['ordered'] );
+
+		$this->assertEquals(
+			[ '<ol class="wp-block-list">', null, null, '</ol>' ],
+			$blocks[0]['innerContent']
+		);
 	}
 
 	/**
@@ -365,8 +384,9 @@ class ContentParserTest extends WP_UnitTestCase {
 
 		$this->assertCount( 1, $blocks );
 		$this->assertEquals( 'core/image', $blocks[0]['blockName'] );
-		$this->assertStringContainsString( 'figcaption', $blocks[0]['innerHTML'] );
-		$this->assertStringContainsString( 'Caption text', $blocks[0]['innerHTML'] );
+		$this->assertStringContainsString( '<figcaption class="wp-element-caption">Caption text</figcaption>', $blocks[0]['innerHTML'] );
+		$this->assertEquals( [ $blocks[0]['innerHTML'] ], $blocks[0]['innerContent'] );
+		$this->assertArrayNotHasKey( 'className', $blocks[0]['attrs'] );
 	}
 
 	/**
